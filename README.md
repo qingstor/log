@@ -28,7 +28,7 @@ func main()  {
 		EntryFormat: "[{level}] - {time} {value}",
 	})
 	if err != nil {
-		println("text transformer created failed for: ", err)
+        println("text transformer created failed for: ", err)
         os.Exit(1)
 	}
 
