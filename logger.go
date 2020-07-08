@@ -36,9 +36,11 @@ type Logger struct {
 // Clone will copy and return a new logger.
 func (l *Logger) Clone() *Logger {
 	x := &Logger{
-		ew:       l.ew,
-		fields:   make([]Transformee, len(l.fields)),
-		executor: l.executor,
+		ew: l.ew,
+
+		executor:    l.executor,
+		transformer: l.transformer,
+		fields:      make([]Transformee, len(l.fields)),
 	}
 
 	x.fields = append(x.fields, l.fields...)
