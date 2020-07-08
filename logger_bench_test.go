@@ -4,11 +4,19 @@ import (
 	"io/ioutil"
 	"testing"
 	"time"
+
+	"github.com/qingstor/log/level"
 )
 
 func benchmarkLogger(b *testing.B, f func(*Logger)) {
-	m := MatchHigherLevel(InfoLevel)
-	logger := New().WithExecutor(ExecuteMatchWrite(m, ioutil.Discard))
+	tf, _ := NewText(&TextConfig{
+		TimeFormat:  "1136239445",
+		EntryFormat: "{value}",
+	})
+	m := MatchHigherLevel(level.Info)
+	logger := New().
+		WithExecutor(ExecuteMatchWrite(m, ioutil.Discard)).
+		WithTransformer(tf)
 
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
@@ -47,7 +55,7 @@ func BenchmarkLogger_Info(b *testing.B) {
 	x := "Hello, world."
 
 	benchmarkLogger(b, func(logger *Logger) {
-		logger.Info(
+		logger.Error(
 			String("string", x),
 			Bytes("bytes", []byte(x)),
 			Int("int64", 1234567890),
@@ -59,7 +67,7 @@ func BenchmarkLogger_Info(b *testing.B) {
 
 func BenchmarkLogger_Int(b *testing.B) {
 	benchmarkLogger(b, func(logger *Logger) {
-		logger.Info(
+		logger.Error(
 			Int("int64", 1234567890),
 			Int("int64", 1234567890),
 			Int("int64", 1234567890),

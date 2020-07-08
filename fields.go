@@ -2,8 +2,6 @@ package log
 
 import (
 	"time"
-
-	"github.com/qingstor/log/transform"
 )
 
 // IntField carries an int value.
@@ -21,9 +19,9 @@ func Int(k string, v int64) *IntField {
 }
 
 // Transform an IntField.
-func (f *IntField) Transform(m transform.Transformer) {
-	m.Key(f.k)
-	m.AppendInt(f.v)
+func (f *IntField) Transform(l *Logger, e *Entry) {
+	l.transformer.Key(e, f.k)
+	e.buf.AppendInt(f.v)
 }
 
 // UintField carries a uint value.
@@ -41,9 +39,9 @@ func Uint(k string, v uint64) *UintField {
 }
 
 // Transform a UintField.
-func (f *UintField) Transform(m transform.Transformer) {
-	m.Key(f.k)
-	m.AppendUint(f.v)
+func (f *UintField) Transform(l *Logger, e *Entry) {
+	l.transformer.Key(e, f.k)
+	e.buf.AppendUint(f.v)
 }
 
 // StringField carries a string value.
@@ -61,13 +59,13 @@ func String(k, v string) *StringField {
 }
 
 // Transform a StringField.
-func (f *StringField) Transform(m transform.Transformer) {
-	m.Key(f.k)
+func (f *StringField) Transform(l *Logger, e *Entry) {
+	l.transformer.Key(e, f.k)
 
-	m.Start(transform.ContainerQuote)
-	defer m.End(transform.ContainerQuote)
+	l.transformer.Start(e, ContainerQuote)
+	defer l.transformer.End(e, ContainerQuote)
 
-	m.AppendString(f.v)
+	e.buf.AppendString(f.v)
 }
 
 // BytesField carries an bytes value.
@@ -85,9 +83,9 @@ func Bytes(k string, v []byte) *BytesField {
 }
 
 // Transform a BytesField.
-func (f *BytesField) Transform(m transform.Transformer) {
-	m.Key(f.k)
-	m.AppendBytes(f.v)
+func (f *BytesField) Transform(l *Logger, e *Entry) {
+	l.transformer.Key(e, f.k)
+	e.buf.AppendBytes(f.v)
 }
 
 // FloatField carries a float value.
@@ -105,9 +103,9 @@ func Float(k string, v float64) *FloatField {
 }
 
 // Transform a FloatField.
-func (f *FloatField) Transform(m transform.Transformer) {
-	m.Key(f.k)
-	m.AppendFloat(f.v)
+func (f *FloatField) Transform(l *Logger, e *Entry) {
+	l.transformer.Key(e, f.k)
+	e.buf.AppendFloat(f.v)
 }
 
 // TimeField carries a time value.
@@ -129,7 +127,11 @@ func Time(k string, v time.Time, layout string) *TimeField {
 }
 
 // Transform a TimeField.
-func (f *TimeField) Transform(m transform.Transformer) {
-	m.Key(f.k)
-	m.AppendTime(f.v, f.layout)
+func (f *TimeField) Transform(l *Logger, e *Entry) {
+	l.transformer.Key(e, f.k)
+
+	l.transformer.Start(e, ContainerQuote)
+	defer l.transformer.End(e, ContainerQuote)
+
+	e.buf.AppendTime(f.v, f.layout)
 }
