@@ -1,6 +1,7 @@
 package log
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -44,5 +45,38 @@ func TestLogger_InfoWithLoggerEntry(t *testing.T) {
 	l.Info(
 		Int("version", 1024),
 		String("msg", "test logger"),
+	)
+}
+
+func ExampleLogger_Info() {
+	tf, err := NewText(&TextConfig{
+		// Use unix timestamp for time
+		TimeFormat: TimeFormatUnixNano,
+		// Use upper case level
+		LevelFormat: level.UpperCase,
+		EntryFormat: "[{level}] - {time} {value}",
+	})
+	if err != nil {
+		println("text config created failed for: ", err)
+		os.Exit(1)
+	}
+
+	e := ExecuteMatchWrite(
+		// Only print log that level is higher than Debug.
+		MatchHigherLevel(level.Debug),
+		// Write into stderr.
+		os.Stderr,
+	)
+
+	logger := New().
+		WithExecutor(e).
+		WithTransformer(tf).
+		WithFields(
+			String("request_id", "8da3aceea1ba"),
+		)
+
+	logger.Info(
+		String("object_key", "test_object"),
+		Int("version", 3),
 	)
 }

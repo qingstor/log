@@ -22,27 +22,37 @@ import (
 )
 
 func main()  {
-    tf, err := NewText(&TextConfig{
-		TimeFormat:  TimeFormatUnixNano,
-		LevelFormat: level.LowerCase,
+	tf, err := NewText(&TextConfig{
+		// Use unix timestamp nano for time
+		TimeFormat: TimeFormatUnixNano,
+		// Use upper case level
+		LevelFormat: level.UpperCase,
 		EntryFormat: "[{level}] - {time} {value}",
 	})
 	if err != nil {
-        println("text transformer created failed for: ", err)
-        os.Exit(1)
+		println("text config created failed for: ", err)
+		os.Exit(1)
 	}
 
-    l := New().
-        WithTransformer(tf).
-        WithFields(
-            String("request_id", "abcdefg"),
-        )
-    
-    l.Info(
-        log.Int("version", 1024),
-        log.String("msg", "test logger")
-    )
+	e := ExecuteMatchWrite(
+		// Only print log that level is higher than Debug.
+		MatchHigherLevel(level.Debug),
+		// Write into stderr.
+		os.Stderr,
+	)
 
-    // [info] - 1594174591970815623 request_id="abcdefg" version=1024 msg="test logger"
+	logger := New().
+		WithExecutor(e).
+		WithTransformer(tf).
+		WithFields(
+			String("request_id", "8da3aceea1ba"),
+		)
+
+	logger.Info(
+		String("object_key", "test_object"),
+		Int("version", 3),
+	)
+
+    // [INFO] - 1594174591970815623 request_id="8da3aceea1ba" object_key="test_object" version=3
 }
 ```
