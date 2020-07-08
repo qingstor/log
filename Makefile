@@ -26,5 +26,8 @@ build: tidy check
 test:
 	@go test -race -v ./...
 
+bench:
+	@go list ./... | xargs -n1 go test -bench=. -run="^$$" -benchmem
+
 tidy:
 	@go mod tidy && go mod verify
