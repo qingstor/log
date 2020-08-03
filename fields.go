@@ -135,3 +135,23 @@ func (f *TimeField) Transform(l *Logger, e *Entry) {
 
 	e.buf.AppendTime(f.v, f.layout)
 }
+
+// MessageField carries a msg value.
+type MessageField struct {
+	v string
+}
+
+// String creates a MessageField
+func Message(v string) *MessageField {
+	return &MessageField{
+		v: v,
+	}
+}
+
+// Transform a MessageField.
+func (f *MessageField) Transform(l *Logger, e *Entry) {
+	l.transformer.Start(e, ContainerQuote)
+	defer l.transformer.End(e, ContainerQuote)
+	
+	e.buf.AppendString(f.v)
+}
