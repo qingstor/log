@@ -12,7 +12,7 @@ func TestLogger_Info(t *testing.T) {
 	tf, err := NewText(&TextConfig{
 		TimeFormat:  time.RFC3339,
 		LevelFormat: level.LowerCase,
-		EntryFormat: "[{level}] - {time} {value}",
+		EntryFormat: defaultFormat,
 	})
 	if err != nil {
 		t.Errorf("new text failed for %v", err)
@@ -30,7 +30,7 @@ func TestLogger_InfoWithLoggerEntry(t *testing.T) {
 	tf, err := NewText(&TextConfig{
 		TimeFormat:  TimeFormatUnixNano,
 		LevelFormat: level.LowerCase,
-		EntryFormat: "[{level}] - {time} {value}",
+		EntryFormat: defaultFormat,
 	})
 	if err != nil {
 		t.Errorf("new text failed for %v", err)
@@ -54,7 +54,7 @@ func ExampleLogger_Info() {
 		TimeFormat: TimeFormatUnixNano,
 		// Use upper case level
 		LevelFormat: level.UpperCase,
-		EntryFormat: "[{level}] - {time} {value}",
+		EntryFormat: defaultFormat,
 	})
 	if err != nil {
 		println("text config created failed for: ", err)

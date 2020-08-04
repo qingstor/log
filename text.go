@@ -15,6 +15,8 @@ const (
 	chunkValue
 )
 
+const defaultFormat = "[{level}] - {time} {value}"
+
 // nextChunk will parse layout to related chunk.
 func nextChunk(layout []byte) (pre []byte, chunk int, suffix []byte) {
 	startIdx := bytes.IndexByte(layout, '{')

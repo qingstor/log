@@ -8,11 +8,16 @@ import (
 	"github.com/qingstor/log/level"
 )
 
-// New will create a new logger.
+// New will create a new logger with default text config.
 func New() *Logger {
+	tf, _ := NewText(&TextConfig{
+		EntryFormat: defaultFormat,
+		TimeFormat:  TimeFormatUnix,
+	})
 	l := &Logger{
-		ew:       os.Stderr,
-		executor: ExecuteWrite(os.Stderr),
+		ew:          os.Stderr,
+		executor:    ExecuteWrite(os.Stderr),
+		transformer: tf,
 	}
 	return l
 }
