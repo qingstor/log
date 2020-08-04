@@ -79,7 +79,7 @@ func BenchmarkNextChunk(b *testing.B) {
 	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_, _, _ = nextChunk([]byte("[{level}] - {time} {value}"))
+			_, _, _ = nextChunk([]byte(defaultFormat))
 		}
 	})
 }
@@ -88,7 +88,7 @@ func BenchmarkNewText(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			_, _ = NewText(&TextConfig{
-				EntryFormat:    "[{level}] - {time} {value}",
+				EntryFormat:    defaultFormat,
 				LevelFormat:    level.UpperCase,
 				TimeFormat:     time.RFC822,
 				ValueContainer: nil,
