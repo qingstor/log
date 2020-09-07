@@ -70,6 +70,12 @@ func (l *Logger) WithFields(fields ...Transformee) *Logger {
 	return l
 }
 
+// AddFields will append logger's fields, won't check whether it exists
+func (l *Logger) AddFields(fields ...Transformee) *Logger {
+	l.fields = append(l.fields, fields...)
+	return l
+}
+
 // Print will print an empty entry.
 func (l *Logger) Print(fields ...Transformee) {
 	e := newEntry(level.Empty, fields...)

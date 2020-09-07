@@ -1,7 +1,9 @@
 package log
 
 import (
+	"bytes"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -46,6 +48,39 @@ func TestLogger_InfoWithLoggerEntry(t *testing.T) {
 		Int("version", 1024),
 		String("msg", "test logger"),
 	)
+}
+
+func TestLogger_AddFields(t *testing.T) {
+	var buf bytes.Buffer
+	tf, err := NewText(&TextConfig{
+		TimeFormat:  TimeFormatUnixNano,
+		LevelFormat: level.LowerCase,
+		EntryFormat: defaultFormat,
+	})
+	if err != nil {
+		t.Errorf("new text failed for %v", err)
+	}
+
+	e := ExecuteWrite(&buf)
+
+	l := New().
+		WithTransformer(tf).
+		WithExecutor(e).
+		AddFields(
+			String("request_id", "abcdefg"),
+		).
+		AddFields(
+			String("request_id", "gfedcba"),
+		)
+
+	l.Info(
+		Int("version", 1024),
+		String("msg", "test logger"),
+	)
+
+	if c := strings.Count(buf.String(), "request_id"); c != 2 {
+		t.Errorf("expected contains 2 request_id, only got %d", c)
+	}
 }
 
 func ExampleLogger_Info() {
